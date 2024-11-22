@@ -1,3 +1,4 @@
+# https://github.com/hashicorp/tfc-workflows-github?tab=readme-ov-file
 name: "Terraform Apply"
 
 on:
@@ -5,7 +6,7 @@ on:
 
 env:
   TF_CLOUD_ORGANIZATION: "FH_Technikum"
-  TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
+  TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}" # token ust be set in github (was created in terraform cloud account)
   TF_WORKSPACE: "IaC_TFWorkshop3"
   CONFIG_DIRECTORY: "./"
 

@@ -182,21 +182,22 @@ resource "aws_elb" "web_elb" {
   security_groups = [aws_security_group.allow_web.id]
   subnets         = [aws_subnet.subnet-1.id] # either specify subnets or AZ not both
 
-  listener {
-    instance_port     = 80
-    instance_protocol = "HTTP"
-    lb_port           = 80
-    lb_protocol       = "HTTP"
+  listener {                   # defines how the load balance listens to incoming requests and where to forward it to
+    instance_port     = 80     # port for the backend server (our apache web instances)
+    instance_protocol = "HTTP" # instance protocol
+    lb_port           = 80     # defines the port where the loadbalancer listens to incoming client requests
+    lb_protocol       = "HTTP" # lb protocol
   }
 
-  health_check {
+  health_check { # checks the health (availability) of the web server instances
     target              = "HTTP:80/"
-    interval            = 30
-    timeout             = 5
-    healthy_threshold   = 2
-    unhealthy_threshold = 2
+    interval            = 30 # every 30 seconds
+    timeout             = 5  # timeout period 5 seconds
+    healthy_threshold   = 2  # number of health checks that must succeed to consider an instance healthy
+    unhealthy_threshold = 2  # number of health checks that need to fail to consider an instance unhealthy
   }
 
+  #defines the instances that the lb traffic will be forwared to
   instances = aws_instance.web-server-instance[*].id
 
   tags = {
