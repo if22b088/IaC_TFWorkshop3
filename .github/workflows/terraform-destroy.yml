@@ -34,7 +34,7 @@ jobs:
           workspace: ${{ env.TF_WORKSPACE }}
           configuration_version: ${{ steps.destroy-upload.outputs.configuration_version_id }}
           #destroy: true
-          speculative: true
+          #speculative: true
 
       - name: Destroy
         uses: hashicorp/tfc-workflows-github/actions/apply-run@v1.0.0
