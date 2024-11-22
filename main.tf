@@ -130,8 +130,8 @@ resource "aws_network_interface" "web-server-nic" {
 resource "aws_eip" "one" {
   count = 3 # <--- for number of instances
   #network_interface         = aws_network_interface.web-server-nic.id <-- for only one instance
-  network_interface         = aws_network_interface.web-server-nic[count.index].id # <--- can use index so that all three instances are assigned an EIP
-  associate_with_private_ip = ["10.0.1.10", "10.0.1.11", "10.0.1.12"]              # elemen() is a built in function, that iterates through the elements of a list using and index
+  network_interface         = aws_network_interface.web-server-nic[count.index].id          # <--- can use index so that all three instances are assigned an EIP
+  associate_with_private_ip = element(["10.0.1.10", "10.0.1.11", "10.0.1.12"], count.index) # elemen() is a built in function, that iterates through the elements of a list using and index
   #associate_with_private_ip = "10.0.1.10"
   depends_on = [aws_internet_gateway.gw, aws_instance.web-server-instance, aws_network_interface.web-server-nic]
 
