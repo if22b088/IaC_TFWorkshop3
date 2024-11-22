@@ -33,7 +33,6 @@ jobs:
         with:
           workspace: ${{ env.TF_WORKSPACE }}
           configuration_version: ${{ steps.destroy-upload.outputs.configuration_version_id }}
-          destroy: true # This is the key change to trigger the destroy action
 
       - name: Destroy
         uses: hashicorp/tfc-workflows-github/actions/apply-run@v1.0.0

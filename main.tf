@@ -4,6 +4,7 @@
 # 3. Create a Workspace named "IaC_TFWorkshop3"
 # 4. Create AWS Variables for AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY and AWS_SESSION_TOKEN
 # 5. Create an API token for GitHub Actions in User Settings
+# used this guide to create the github Actions setupt and workflow.yml files: https://developer.hashicorp.com/terraform/tutorials/automation/github-actions
 
 terraform {
   required_providers {
