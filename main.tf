@@ -1,4 +1,3 @@
-
 # 1. Create HasiCorp Account 
 # 2. Create an Organization named "FH_Technikum"
 # 3. Create a Workspace named "IaC_TFWorkshop3"
@@ -119,8 +118,9 @@ resource "aws_security_group" "allow_web" {
 # 7. Create a network interface with an ip in the subnet that was created in step 4
 
 resource "aws_network_interface" "web-server-nic" {
+  count           = 3 # <-- for number of instances
   subnet_id       = aws_subnet.subnet-1.id
-  private_ips     = ["10.0.1.10"]
+  private_ips     = ["10.0.1.10", "10.0.1.11", "10.0.1.12"] #<--- ips for $count of instances
   security_groups = [aws_security_group.allow_web.id]
 
 }
@@ -128,29 +128,32 @@ resource "aws_network_interface" "web-server-nic" {
 # 8. Assign an elastic IP to the network interface created in step 7
 
 resource "aws_eip" "one" {
-  #vpc                       = true <---deprecated
-  # domain                    = "vpc"
-  network_interface         = aws_network_interface.web-server-nic.id
-  associate_with_private_ip = "10.0.1.10"
-  depends_on                = [aws_internet_gateway.gw, aws_instance.web-server-instance, aws_network_interface.web-server-nic]
+  count = 3 # <--- for number of instances
+  #network_interface         = aws_network_interface.web-server-nic.id <-- for only one instance
+  network_interface         = aws_network_interface.web-server-nic[count.index].id        # <--- can use index so that all three instances are assigned an EIP
+  associate_with_private_ip = element(["10.0.1.10", "10.0.1.11", "10.1.12"], count.index) # elemen() is a built in function, that iterates through the elements of a list using and index
+  #associate_with_private_ip = "10.0.1.10"
+  depends_on = [aws_internet_gateway.gw, aws_instance.web-server-instance, aws_network_interface.web-server-nic]
 
 }
 
-output "server_public_ip" {     # outputs the public ip after this script is executed
-  value = aws_eip.one.public_ip # <- here we dont want the .id but the whole resource (the ip)
-}
+#output "server_public_ip" {     # outputs the public ip after this script is executed
+#  value = aws_eip.one.public_ip # <- here we dont want the .id but the whole resource (the ip)
+#}
 
 # 9. Create Ubuntu server and install/enable apache2
 
 resource "aws_instance" "web-server-instance" {
+
+  count             = 3                       #<--- number instances to create
   ami               = "ami-0866a3c8686eaeeba" # ubuntu server 24.04 LTS version
   instance_type     = "t2.micro"
   availability_zone = "us-east-1a"
   key_name          = "vockey" # use existing ssh key, necessary for bash script execution to install and run apache web server
 
-  network_interface {        # the network interface that is used for this instance, we previously assigned the public ip to this interface
-    device_index         = 0 # first interface (starts with 0), mandatory
-    network_interface_id = aws_network_interface.web-server-nic.id
+  network_interface {                                                           # the network interface that is used for this instance, we previously assigned the public ip to this interface
+    device_index         = 0                                                    # first interface (starts with 0), mandatory
+    network_interface_id = aws_network_interface.web-server-nic[count.index].id # <<--- once again use the [count.index] to name the interfaces
   }
 
   # execute bashscript: updates repositories and then installs the latest version of apache2, adds to systemctl (so it starts on instance startup)
@@ -166,4 +169,40 @@ resource "aws_instance" "web-server-instance" {
   tags = {
     Name = "web-server"
   }
+}
+
+
+
+# 10 Create Load Balancer
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/elb
+resource "aws_elb" "web_elb" {
+  name               = "web-elb"
+  availability_zones = ["us-east-1a"]
+  security_groups    = [aws_security_group.allow_web.id]
+  subnets            = [aws_subnet.subnet-1.id]
+
+  listener {
+    instance_port     = 80
+    instance_protocol = "HTTP"
+    lb_port           = 80
+    lb_protocol       = "HTTP"
+  }
+
+  health_check {
+    target              = "HTTP:80/"
+    interval            = 30
+    timeout             = 5
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+  }
+
+  instances = aws_instance.web-server-instance[*].id
+
+  tags = {
+    Name = "web-elb"
+  }
+}
+
+output "load_balancer_dns" {
+  value = aws_elb.web_elb.dns_name # <-- outputs the dns name of the load balancer
 }
