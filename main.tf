@@ -120,7 +120,7 @@ resource "aws_security_group" "allow_web" {
 resource "aws_network_interface" "web-server-nic" {
   count           = 3 # <-- for number of instances
   subnet_id       = aws_subnet.subnet-1.id
-  private_ips     = ["10.0.1.10", "10.0.1.11", "10.0.1.12"] #<--- ips for $count of instances
+  private_ips     = element(["10.0.1.10", "10.0.1.11", "10.0.1.12"], count.index) #<--- ips for $count of instances
   security_groups = [aws_security_group.allow_web.id]
 
 }
