@@ -28,7 +28,7 @@ jobs:
           directory: ${{ env.CONFIG_DIRECTORY }}
 
       - name: Create Destroy Run (speculative)
-        uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
+        uses: hashicorp/tfc-workflows-github/actions/destroy-run@v1.0.0
         id: destroy-run
         with:
           workspace: ${{ env.TF_WORKSPACE }}
