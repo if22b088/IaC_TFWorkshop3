@@ -165,7 +165,8 @@ resource "aws_instance" "web-server-instance" {
                 sudo apt-get install -y apache2
                 sudo systemctl start apache2
                 sudo systemctl enable apache2
-                echo "<h1>Hello World!</h1> " | sudo tee /var/www/html/index.html
+                HOSTNAME=$(hostname)
+                echo "<h1>Hello World! from $HOSTNAME</h1> " | sudo tee /var/www/html/index.html
                 EOF
   tags = {
     Name = "web-server"
