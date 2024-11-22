@@ -18,12 +18,12 @@ terraform {
   }
   required_version = ">= 1.1.0"
 
-  cloud {
+  cloud { # Configures Terraform Cloud as the backend to store the Terraform state
 
     organization = "FH_Technikum"
 
     workspaces {
-      name = "IaC_TFWorkshop3"
+      name = "IaC_TFWorkshop3" # Workspace that manages the state
     }
   }
 
@@ -33,13 +33,13 @@ terraform {
 
 
 provider "aws" {
-  region = "us-east-1"
+  region = "us-east-1" # specifies the region where the resources will be deployed
 }
 
 # 1. Create vpc
 
-#all resources start with the "TYPE" and then a custom "NAME". in this case aws_vpc is the resource type and workshop3_vpc is the given name
-# all the following resource will follow the same kind of declaration
+# All resources start with the "TYPE" and then a custom "NAME". Un this case aws_vpc is the resource type and workshop3_vpc is the given name
+# All the following resource will follow the same kind of declaration
 resource "aws_vpc" "workshop3_vpc" {
   cidr_block = "10.0.0.0/16" # the cidr block that is used for this vpc, subnets have to be within this network
   tags = {                   # sets a tag
@@ -158,13 +158,14 @@ resource "aws_instance" "web-server-instance" {
 
   # execute bashscript: updates repositories and then installs the latest version of apache2, adds to systemctl (so it starts on instance startup)
   # then copies <h1>Hello World</h1> in the apaches default index.html file
+  # added from $(hostname) so that it can be verified if the load balancer works
   user_data = <<-EOF
                 #!/bin/bash
                 sudo apt-get update
                 sudo apt-get install -y apache2
                 sudo systemctl start apache2
                 sudo systemctl enable apache2
-                echo "<h1>Hello World</h1>" | sudo tee /var/www/html/index.html
+                echo "<h1>Hello World</h1>" from $(hostname) | sudo tee /var/www/html/index.html
                 EOF
   tags = {
     Name = "web-server"

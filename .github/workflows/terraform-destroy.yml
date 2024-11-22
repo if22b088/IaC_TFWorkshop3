@@ -40,5 +40,4 @@ jobs:
         id: destroy-apply
         with:
           run: ${{ steps.destroy-run.outputs.run_id }}
-          args: -is_destroy=true
           comment: "Destroy Run from GitHub Actions CI ${{ github.sha }}"
