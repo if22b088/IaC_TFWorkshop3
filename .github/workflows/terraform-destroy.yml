@@ -1,4 +1,4 @@
-name: "Terraform Apply"
+name: "Terraform Destroy"
 
 on:
   workflow_dispatch:
@@ -12,7 +12,7 @@ env:
 jobs:
   terraform:
     if: github.repository != 'hashicorp-education/IaC_TFWorkshop3'
-    name: "Terraform Apply"
+    name: "Terraform Destroy"
     runs-on: ubuntu-latest
     permissions:
       contents: read
