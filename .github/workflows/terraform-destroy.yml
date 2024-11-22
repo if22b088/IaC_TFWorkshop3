@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Upload Configuration
-        uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.2.0 # 1.2.0 for is_destry to work
+        uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.3.1 # 1.2.0 for is_destry to work
         id: destroy-upload
         with:
           workspace: ${{ env.TF_WORKSPACE }}
@@ -31,7 +31,7 @@ jobs:
 
         # https://github.com/hashicorp/tfc-workflows-github/issues/2979
       - name: Create Destroy Run
-        uses: hashicorp/tfc-workflows-github/actions/create-run@v1.2.0
+        uses: hashicorp/tfc-workflows-github/actions/create-run@v1.3.1
         id: destroy-run
         with:
           workspace: ${{ env.TF_WORKSPACE }}
@@ -39,7 +39,7 @@ jobs:
           is_destroy: true # <-- needs to be set
 
       - name: Apply Destroy Run
-        uses: hashicorp/tfc-workflows-github/actions/apply-run@v1.2.0
+        uses: hashicorp/tfc-workflows-github/actions/apply-run@v1.3.1
         if: fromJSON(steps.destroy-run.outputs.payload).data.attributes.actions.IsConfirmable
         id: destroy-apply
         with:
