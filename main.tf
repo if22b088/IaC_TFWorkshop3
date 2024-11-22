@@ -176,10 +176,10 @@ resource "aws_instance" "web-server-instance" {
 # 10 Create Load Balancer
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/elb
 resource "aws_elb" "web_elb" {
-  name               = "web-elb"
-  availability_zones = ["us-east-1a"]
-  security_groups    = [aws_security_group.allow_web.id]
-  subnets            = [aws_subnet.subnet-1.id]
+  name = "web-elb"
+  #availability_zones = ["us-east-1a"]# either specify subnets or AZ not both
+  security_groups = [aws_security_group.allow_web.id]
+  subnets         = [aws_subnet.subnet-1.id] # either specify subnets or AZ not both
 
   listener {
     instance_port     = 80
