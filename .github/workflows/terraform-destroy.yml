@@ -33,7 +33,7 @@ jobs:
         with:
           workspace: ${{ env.TF_WORKSPACE }}
           configuration_version: ${{ steps.destroy-upload.outputs.configuration_version_id }}
-          destroy: true
+          #destroy: true
           speculative: true
 
       - name: Destroy
