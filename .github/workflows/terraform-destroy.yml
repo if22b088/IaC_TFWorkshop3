@@ -28,7 +28,7 @@ jobs:
           directory: ${{ env.CONFIG_DIRECTORY }}
 
       - name: Create Destroy Run
-        uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
+        uses: hashicorp/tfc-workflows-github/actions/destroy-run@v1.0.0
         id: destroy-run
         with:
           workspace: ${{ env.TF_WORKSPACE }}
@@ -36,9 +36,9 @@ jobs:
           destroy: true
 
       - name: Destroy
-        uses: hashicorp/tfc-workflows-github/actions/apply-run@v1.0.0
+        uses: hashicorp/tfc-workflows-github/actions/destroy-run@v1.0.0
         if: fromJSON(steps.destroy-run.outputs.payload).data.attributes.actions.IsConfirmable
-        id: apply
+        id: destroy
         with:
           run: ${{ steps.destroy-run.outputs.run_id }}
           comment: "Destroy Run from GitHub Actions CI ${{ github.sha }}"
