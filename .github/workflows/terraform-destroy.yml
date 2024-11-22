@@ -33,7 +33,6 @@ jobs:
         with:
           workspace: ${{ env.TF_WORKSPACE }}
           configuration_version: ${{ steps.destroy-upload.outputs.configuration_version_id }}
-          args: -is_destroy = true
 
       - name: Apply Destroy Run
         uses: hashicorp/tfc-workflows-github/actions/apply-run@v1.0.0
@@ -41,4 +40,5 @@ jobs:
         id: destroy-apply
         with:
           run: ${{ steps.destroy-run.outputs.run_id }}
+          args: -is_destroy=true
           comment: "Destroy Run from GitHub Actions CI ${{ github.sha }}"
