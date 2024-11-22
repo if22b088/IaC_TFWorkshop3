@@ -17,7 +17,7 @@ terraform {
     }
   }
   required_version = ">= 1.1.0"
-  /* cloud {
+  cloud {
 
     organization = "FH_Technikum"
 
@@ -25,7 +25,7 @@ terraform {
       name = "IaC_TFWorkshop3"
     }
   }
-  */
+
 }
 
 
@@ -127,7 +127,7 @@ resource "aws_network_interface" "web-server-nic" {
 
 resource "aws_eip" "one" {
   #vpc                       = true <---deprecated
-  domain                    = "vpc"
+  # domain                    = "vpc"
   network_interface         = aws_network_interface.web-server-nic.id
   associate_with_private_ip = "10.0.1.10"
   depends_on                = [aws_internet_gateway.gw]
