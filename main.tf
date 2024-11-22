@@ -38,25 +38,25 @@ provider "aws" {
 
 # 1. Create vpc
 
-#all resources start with the "TYPE" and then a custom "NAME". in this case aws_vpc is the resource type and workshop2_vpc is the given name
+#all resources start with the "TYPE" and then a custom "NAME". in this case aws_vpc is the resource type and workshop3_vpc is the given name
 # all the following resource will follow the same kind of declaration
-resource "aws_vpc" "workshop2_vpc" {
+resource "aws_vpc" "workshop3_vpc" {
   cidr_block = "10.0.0.0/16" # the cidr block that is used for this vpc, subnets have to be within this network
   tags = {                   # sets a tag
-    Name = "workshop2_vpc"   # key value pair of the tag
+    Name = "workshop3_vpc"   # key value pair of the tag
   }
 }
 
 # 2. Create Internet Gateway
 
 resource "aws_internet_gateway" "gw" {
-  vpc_id = aws_vpc.workshop2_vpc.id
+  vpc_id = aws_vpc.workshop3_vpc.id
 }
 
 # 3. Create Custom Route Table
 
-resource "aws_route_table" "workshop2_RT" {
-  vpc_id = aws_vpc.workshop2_vpc.id
+resource "aws_route_table" "workshop3_RT" {
+  vpc_id = aws_vpc.workshop3_vpc.id
 
   route {
     cidr_block = "0.0.0.0/0" # for the whole network
@@ -64,19 +64,19 @@ resource "aws_route_table" "workshop2_RT" {
   }
 
   tags = {
-    Name = "workshop2"
+    Name = "workshop3"
   }
 }
 
 # 4. Create a Subnet 
 
 resource "aws_subnet" "subnet-1" {
-  vpc_id            = aws_vpc.workshop2_vpc.id
+  vpc_id            = aws_vpc.workshop3_vpc.id
   cidr_block        = "10.0.1.0/24"
   availability_zone = "us-east-1a"
 
   tags = {
-    Name = "workshop2-subnet"
+    Name = "workshop3-subnet"
   }
 }
 
@@ -84,14 +84,14 @@ resource "aws_subnet" "subnet-1" {
 # does not work without this association - "binds" subnet to route table
 resource "aws_route_table_association" "a" {
   subnet_id      = aws_subnet.subnet-1.id
-  route_table_id = aws_route_table.workshop2_RT.id
+  route_table_id = aws_route_table.workshop3_RT.id
 }
 
 # 6. Create Security Group to allow port 80 
 resource "aws_security_group" "allow_web" {
   name        = "allow_web_traffic"
   description = "Allow Web inbound traffic"
-  vpc_id      = aws_vpc.workshop2_vpc.id
+  vpc_id      = aws_vpc.workshop3_vpc.id
 
   #incoming traffic/ports
   ingress {
