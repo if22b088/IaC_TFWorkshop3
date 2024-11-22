@@ -12,7 +12,7 @@ env:
 jobs:
   terraform:
     if: github.repository != 'hashicorp-education/IaC_TFWorkshop3'
-    name: "Terraform Apply"
+    name: "Terraform Destroy"
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -22,7 +22,7 @@ jobs:
 
       - name: Upload Configuration
         uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.0.0
-        id: apply-upload
+        id: destroy-upload
         with:
           workspace: ${{ env.TF_WORKSPACE }}
           directory: ${{ env.CONFIG_DIRECTORY }}
@@ -32,13 +32,13 @@ jobs:
         id: destroy-run
         with:
           workspace: ${{ env.TF_WORKSPACE }}
-          configuration_version: ${{ steps.apply-upload.outputs.configuration_version_id }}
+          configuration_version: ${{ steps.destroy-upload.outputs.configuration_version_id }}
           destroy: true
 
       - name: Destroy
         uses: hashicorp/tfc-workflows-github/actions/apply-run@v1.0.0
-        if: fromJSON(steps.apply-run.outputs.payload).data.attributes.actions.IsConfirmable
+        if: fromJSON(steps.destroy-run.outputs.payload).data.attributes.actions.IsConfirmable
         id: apply
         with:
-          run: ${{ steps.apply-run.outputs.run_id }}
+          run: ${{ steps.destroy-run.outputs.run_id }}
           comment: "Destroy Run from GitHub Actions CI ${{ github.sha }}"
