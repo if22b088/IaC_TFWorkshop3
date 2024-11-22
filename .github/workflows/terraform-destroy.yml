@@ -27,14 +27,13 @@ jobs:
           workspace: ${{ env.TF_WORKSPACE }}
           directory: ${{ env.CONFIG_DIRECTORY }}
 
-      - name: Create Destroy Run (speculative)
+      - name: Create Destroy Run
         uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
         id: destroy-run
         with:
           workspace: ${{ env.TF_WORKSPACE }}
           configuration_version: ${{ steps.destroy-upload.outputs.configuration_version_id }}
-          destroy: true
-          #speculative: true
+          is_destroy: true
 
       - name: Destroy
         uses: hashicorp/tfc-workflows-github/actions/apply-run@v1.0.0
